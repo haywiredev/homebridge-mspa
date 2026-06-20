@@ -1,36 +1,36 @@
 # homebridge-mspa
 
-Homebridge Plugin zur Steuerung von **MSpa Whirlpools** über Apple HomeKit.
+Homebridge plugin for controlling **MSpa hot tubs** via Apple HomeKit.
 
-Verbindet sich mit der MSpa Cloud-API (dieselbe wie die MSpa Link App) und stellt den Pool als HomeKit-Accessories bereit.
+Connects to the MSpa Cloud API (the same one used by the MSpa Link app) and exposes your hot tub as HomeKit accessories.
 
 ---
 
 ## Features
 
-| Accessory | HomeKit | Funktion |
+| Accessory | HomeKit Type | Function |
 |---|---|---|
-| **Whirlpool Temperatur** | Thermostat | Wassertemperatur anzeigen, Zieltemperatur setzen, Heizung an/aus |
-| **Whirlpool Filter** | Schalter | Filterpumpe an/aus (schaltet Heizung automatisch aus falls nötig) |
-| **Whirlpool Blasen** | Schalter | Massage-Blasen an/aus |
+| **Hot Tub Temperature** | Thermostat | View current water temp, set target temp, toggle heating |
+| **Hot Tub Filter** | Switch | Turn filter pump on/off (auto-disables heater if needed) |
+| **Hot Tub Bubbles** | Switch | Turn massage bubbles on/off |
 
 ---
 
-## Voraussetzungen
+## Requirements
 
-- [Homebridge](https://homebridge.io/) v1.6 oder neuer
-- MSpa Whirlpool mit WLAN-Anbindung
-- MSpa Link App Account (E-Mail + Passwort)
+- [Homebridge](https://homebridge.io/) v1.6 or later
+- MSpa hot tub with Wi-Fi support
+- MSpa Link app account (email + password)
 
 ---
 
 ## Installation
 
-### Option A — Homebridge UI (empfohlen)
+### Option A — Homebridge UI (recommended)
 
-1. Homebridge UI öffnen → **Plugins**
-2. Nach `homebridge-mspa` suchen
-3. **Install** klicken
+1. Open Homebridge UI → **Plugins**
+2. Search for `homebridge-mspa`
+3. Click **Install**
 
 ### Option B — Terminal
 
@@ -40,27 +40,27 @@ npm install -g homebridge-mspa
 
 ---
 
-## Konfiguration
+## Configuration
 
-In der Homebridge UI unter **Plugins → homebridge-mspa → Einstellungen**:
+In the Homebridge UI go to **Plugins → homebridge-mspa → Settings**:
 
-| Feld | Beschreibung |
+| Field | Description |
 |---|---|
-| **Name** | Name des Accessories in HomeKit (z.B. `Whirlpool`) |
-| **E-Mail** | Login-E-Mail der MSpa Link App |
-| **Passwort** | Passwort der MSpa Link App |
-| **Region** | `ROW` für Europa, `US` für USA, `CN` für China |
+| **Name** | Name shown in HomeKit (e.g. `Hot Tub`) |
+| **Email** | Your MSpa Link app login email |
+| **Password** | Your MSpa Link app password |
+| **Region** | `ROW` for Europe/Rest of World, `US` for USA, `CN` for China |
 
-Oder manuell in der `config.json`:
+Or add it manually to `config.json`:
 
 ```json
 {
   "platforms": [
     {
       "platform": "MSpaSpa",
-      "name": "Whirlpool",
-      "email": "deine@email.de",
-      "password": "deinPasswort",
+      "name": "Hot Tub",
+      "email": "your@email.com",
+      "password": "yourPassword",
       "region": "ROW"
     }
   ]
@@ -69,42 +69,42 @@ Oder manuell in der `config.json`:
 
 ---
 
-## Verwendung
+## Usage
 
-Nach dem Neustart von Homebridge erscheinen die Accessories automatisch in der **Home-App**.
+After restarting Homebridge the accessories will appear automatically in the **Home app**.
 
-### Temperatur einstellen
+### Setting the temperature
 
-Tippe auf **Whirlpool Temperatur** → Zieltemperatur mit dem Schieberegler einstellen (20–42°C). Der obere Wert zeigt die aktuelle Wassertemperatur.
+Tap the **Hot Tub Temperature** tile → use the slider to set your target temperature (20–42°C). The large number shows the current water temperature.
 
-### Heizung an/aus
+### Turning heating on/off
 
-Im Thermostat-Accessory oben rechts auf **Heizen** oder **Aus** tippen.
+Tap the thermostat accessory and toggle between **Heat** and **Off**.
 
-### Filter & Blasen
+### Filter & Bubbles
 
-Einfach die Schalter antippen.
+Just tap the switches.
 
-> **Hinweis:** Der Filter kann nicht ausgeschaltet werden solange die Heizung läuft. Das Plugin schaltet die Heizung in diesem Fall automatisch zuerst aus.
-
----
-
-## Wie es funktioniert
-
-Das Plugin verbindet sich beim Start mit der MSpa Cloud-API und fragt den Status alle **30 Sekunden** ab. Befehle (z.B. Heizung an) werden sofort an die API gesendet und optimistisch in HomeKit angezeigt — nach dem nächsten Poll wird der echte Status vom Pool übernommen.
+> **Note:** The filter cannot be turned off while the heater is running. The plugin will automatically turn the heater off first before stopping the filter.
 
 ---
 
-## Unterstützte Modelle
+## How it works
 
-Getestet mit:
+The plugin connects to the MSpa Cloud API on startup and polls the device status every **30 seconds**. Commands (e.g. turning heating on) are sent immediately and the HomeKit UI updates optimistically — the real device state is confirmed on the next poll.
+
+---
+
+## Supported Models
+
+Tested with:
 - MSpa Frame Series (F_DU062WE / FRAMEEUVC)
 
-Sollte mit allen MSpa Modellen funktionieren, die die MSpa Link App unterstützen.
+Should work with any MSpa model that supports the MSpa Link app.
 
 ---
 
-## Entwicklung
+## Development
 
 ```bash
 git clone https://github.com/haywiredev/homebridge-mspa
@@ -116,6 +116,6 @@ npm test
 
 ---
 
-## Lizenz
+## License
 
-Apache 2.0 — basiert auf der API-Dokumentation von [DTekNO/mspa-homeassistant](https://github.com/DTekNO/mspa-homeassistant).
+Apache 2.0 — API documentation sourced from [DTekNO/mspa-homeassistant](https://github.com/DTekNO/mspa-homeassistant).
