@@ -28,6 +28,7 @@ export class ThermostatAccessory {
 
     this.service.getCharacteristic(this.C.TargetTemperature)
       .setProps({ minValue: 20, maxValue: 42, minStep: 1 })
+      .setValue(38)
       .onGet(() => this.getTargetTemperature())
       .onSet((v) => this.setTargetTemperature(v));
 
