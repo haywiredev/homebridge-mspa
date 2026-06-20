@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mspa",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Homebridge plugin for MSpa hot tubs",
   "main": "dist/index.js",
   "scripts": {
@@ -19,7 +19,12 @@
   "bugs": {
     "url": "https://github.com/haywiredev/homebridge-mspa/issues"
   },
-  "keywords": ["homebridge-plugin", "mspa", "hot-tub", "spa"],
+  "keywords": [
+    "homebridge-plugin",
+    "mspa",
+    "hot-tub",
+    "spa"
+  ],
   "engines": {
     "node": ">=18.0.0",
     "homebridge": ">=1.6.0"
@@ -43,7 +48,12 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.ts"],
-    "testPathIgnorePatterns": ["/node_modules/", "/tests/\\._"]
+    "testMatch": [
+      "**/tests/**/*.test.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/\\._"
+    ]
   }
 }
