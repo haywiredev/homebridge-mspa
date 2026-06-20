@@ -1,0 +1,37 @@
+{
+  "pluginAlias": "MSpaSpa",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Whirlpool",
+        "required": true
+      },
+      "email": {
+        "title": "MSpa Link E-Mail",
+        "type": "string",
+        "format": "email",
+        "required": true
+      },
+      "password": {
+        "title": "MSpa Link Passwort",
+        "type": "string",
+        "required": true
+      },
+      "region": {
+        "title": "Region",
+        "type": "string",
+        "default": "ROW",
+        "oneOf": [
+          { "title": "Europa / Rest of World", "enum": ["ROW"] },
+          { "title": "USA", "enum": ["US"] },
+          { "title": "China", "enum": ["CN"] }
+        ]
+      }
+    }
+  }
+}
