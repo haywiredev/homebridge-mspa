@@ -112,6 +112,12 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
 
   async sendCommandAndPoll(command: Partial<MspaDeviceStatus>): Promise<void> {
     await this.api.sendCommand(this.device.device_id, this.device.product_id, command);
+    // Optimistic update: sofort den erwarteten Zustand in den Cache schreiben
+    // damit die App nicht zurückspringt während wir auf die API warten
+    const current = this.statusCache.get();
+    if (current) {
+      this.statusCache.set({ ...current, ...command });
+    }
     let count = 0;
     const interval = setInterval(async () => {
       try {
