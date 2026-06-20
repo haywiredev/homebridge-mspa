@@ -11,8 +11,6 @@ import {
   PLUGIN_NAME,
   PLATFORM_NAME,
   POLL_INTERVAL_MS,
-  FAST_POLL_INTERVAL_MS,
-  FAST_POLL_COUNT,
   MspaConfig,
   MspaDevice,
   MspaDeviceStatus,
@@ -21,7 +19,6 @@ import { MspaApi } from './mspaApi';
 import { ThermostatAccessory } from './accessories/thermostat';
 import { FilterAccessory } from './accessories/filter';
 import { BubblesAccessory } from './accessories/bubbles';
-import { JetsAccessory } from './accessories/jets';
 
 
 export class MspaStatusCache {
@@ -48,6 +45,7 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
   private api!: MspaApi;
   private device!: MspaDevice;
   public readonly statusCache = new MspaStatusCache();
+  private pollBlockedUntil = 0;
 
   constructor(
     public readonly log: Logger,
@@ -84,8 +82,14 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
       { id: 'thermostat', name: `${this.config.name} Temperatur`, Class: ThermostatAccessory },
       { id: 'filter',     name: `${this.config.name} Filter`,     Class: FilterAccessory },
       { id: 'bubbles',    name: `${this.config.name} Blasen`,     Class: BubblesAccessory },
-      { id: 'jets',       name: `${this.config.name} Jets`,       Class: JetsAccessory },
     ] as const;
+
+    // Jets-Accessory entfernen falls noch gecacht
+    const jetsUuid = this.homebridgeApi.hap.uuid.generate(`${this.device.device_id}-jets`);
+    const jetsAccessory = this.accessories.find(a => a.UUID === jetsUuid);
+    if (jetsAccessory) {
+      this.homebridgeApi.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [jetsAccessory]);
+    }
 
     for (const { id, name, Class } of configs) {
       const uuid = this.homebridgeApi.hap.uuid.generate(`${this.device.device_id}-${id}`);
@@ -101,6 +105,7 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
 
   private startPolling(): void {
     setInterval(async () => {
+      if (Date.now() < this.pollBlockedUntil) return;
       try {
         const status = await this.api.getStatus(this.device.device_id, this.device.product_id);
         this.statusCache.set(status);
@@ -111,20 +116,14 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
   }
 
   async sendCommandAndPoll(command: Partial<MspaDeviceStatus>): Promise<void> {
-    // Optimistic update VOR dem API-Call — HomeKit fragt onGet sofort nach onSet ab
+    // Optimistic update sofort — HomeKit liest onGet direkt nach onSet
     const current = this.statusCache.get();
     if (current) {
       this.statusCache.set({ ...current, ...command });
     }
+    // Poll für 30s blockieren damit der optimistische Zustand nicht überschrieben wird
+    this.pollBlockedUntil = Date.now() + 30_000;
     await this.api.sendCommand(this.device.device_id, this.device.product_id, command);
-    let count = 0;
-    const interval = setInterval(async () => {
-      try {
-        const status = await this.api.getStatus(this.device.device_id, this.device.product_id);
-        this.statusCache.set(status);
-      } catch { /* ignore */ }
-      if (++count >= FAST_POLL_COUNT) clearInterval(interval);
-    }, FAST_POLL_INTERVAL_MS);
   }
 
   configureAccessory(accessory: PlatformAccessory): void {
