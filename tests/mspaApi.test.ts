@@ -38,10 +38,10 @@ describe('MspaApi', () => {
     expect((api as any).token).toBe('tok123');
   });
 
-  it('getDevices returns device list', async () => {
+  it('getDevices returns device list (data.list format)', async () => {
     (api as any).token = 'tok123';
     mockedAxios.get = jest.fn().mockResolvedValue({
-      data: { data: [{ device_id: 'd1', product_id: 'p1', name: 'Spa' }] },
+      data: { data: { list: [{ device_id: 'd1', product_id: 'p1', name: 'Spa' }] } },
       status: 200,
     });
     const devices = await api.getDevices();
@@ -54,24 +54,20 @@ describe('MspaApi', () => {
     mockedAxios.post = jest.fn().mockResolvedValue({
       data: {
         data: {
-          state: {
-            reported: {
-              water_temperature: 76,
-              temperature_setting: 80,
-              heater_state: 1,
-              filter_state: 0,
-              bubble_state: 0,
-              bubble_level: 1,
-              jet_state: 0,
-              is_online: true,
-            },
-          },
+          water_temperature: 45,
+          temperature_setting: 80,
+          heater_state: 1,
+          filter_state: 0,
+          bubble_state: 0,
+          bubble_level: 1,
+          jet_state: 0,
+          is_online: true,
         },
       },
       status: 200,
     });
     const status = await api.getStatus('d1', 'p1');
-    expect(status.water_temperature).toBe(76);
+    expect(status.water_temperature).toBe(45);
     expect(status.heater_state).toBe(1);
   });
 

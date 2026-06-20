@@ -55,7 +55,7 @@ export class MspaApi {
     const res = await axios.post(`${this.baseUrl}/api/enduser/get_token/`, {
       account: this.config.email,
       app_id: APP_ID,
-      password: this.config.password,
+      password: md5(this.config.password),
       brand: '',
       registration_id: '',
       push_type: 'android',
@@ -74,7 +74,7 @@ export class MspaApi {
     await this.throttle();
     try {
       const res = await this.http.get('/api/enduser/devices/', { headers: this.buildHeaders() });
-      return res.data.data as MspaDevice[];
+      return (res.data.data?.list ?? res.data.data) as MspaDevice[];
     } catch (e: any) {
       if (e?.response?.status === 401) {
         await this.login();
@@ -91,7 +91,8 @@ export class MspaApi {
         device_id: deviceId,
         product_id: productId,
       }, { headers: this.buildHeaders() });
-      return res.data.data.state.reported as MspaDeviceStatus;
+      // API returns status directly in data (not data.state.reported)
+      return res.data.data as MspaDeviceStatus;
     } catch (e: any) {
       if (e?.response?.status === 401) {
         await this.login();
