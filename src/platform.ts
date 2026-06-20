@@ -111,13 +111,12 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
   }
 
   async sendCommandAndPoll(command: Partial<MspaDeviceStatus>): Promise<void> {
-    await this.api.sendCommand(this.device.device_id, this.device.product_id, command);
-    // Optimistic update: sofort den erwarteten Zustand in den Cache schreiben
-    // damit die App nicht zurückspringt während wir auf die API warten
+    // Optimistic update VOR dem API-Call — HomeKit fragt onGet sofort nach onSet ab
     const current = this.statusCache.get();
     if (current) {
       this.statusCache.set({ ...current, ...command });
     }
+    await this.api.sendCommand(this.device.device_id, this.device.product_id, command);
     let count = 0;
     const interval = setInterval(async () => {
       try {
