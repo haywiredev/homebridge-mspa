@@ -9,6 +9,16 @@
     "test": "jest",
     "prepublishOnly": "npm run build"
   },
+  "author": "Benedict",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haywiredev/homebridge-mspa.git"
+  },
+  "homepage": "https://github.com/haywiredev/homebridge-mspa#readme",
+  "bugs": {
+    "url": "https://github.com/haywiredev/homebridge-mspa/issues"
+  },
   "keywords": ["homebridge-plugin", "mspa", "hot-tub", "spa"],
   "engines": {
     "node": ">=18.0.0",
