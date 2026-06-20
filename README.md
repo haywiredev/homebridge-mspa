@@ -2,6 +2,8 @@
 
 Homebridge plugin for controlling **MSpa hot tubs** via Apple HomeKit.
 
+> **Recommendation:** Create a dedicated MSpa Link account just for Homebridge and share access to your hot tub with it. If you use your main account, the MSpa Link app on your phone will get signed out every time Homebridge polls the API.
+
 Connects to the MSpa Cloud API (the same one used by the MSpa Link app) and exposes your hot tub as HomeKit accessories.
 
 ---
