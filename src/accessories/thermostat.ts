@@ -23,6 +23,13 @@ export class ThermostatAccessory {
     this.service = accessory.getService(platform.Service.Thermostat)
       ?? accessory.addService(platform.Service.Thermostat);
 
+    const tempSensor = accessory.getService(platform.Service.TemperatureSensor)
+      ?? accessory.addService(platform.Service.TemperatureSensor, 'Wassertemperatur', 'water-temp');
+    tempSensor.getCharacteristic(this.C.CurrentTemperature)
+      .onGet(() => this.getCurrentTemperature());
+    platform.statusCache.subscribe((s) =>
+      tempSensor.updateCharacteristic(this.C.CurrentTemperature, s.water_temperature / 2));
+
     this.service.getCharacteristic(this.C.CurrentTemperature)
       .onGet(() => this.getCurrentTemperature());
 
@@ -62,6 +69,11 @@ export class ThermostatAccessory {
 
   private async setTargetTemperature(value: CharacteristicValue): Promise<void> {
     const temp = value as number;
+    const heaterOff = this.platform.statusCache.get()?.heater_state !== 1;
+    if (heaterOff) {
+      await this.platform.sendCommandAndPoll({ filter_state: 1 });
+      await this.platform.sendCommandAndPoll({ heater_state: 1 });
+    }
     await this.platform.sendCommandAndPoll({ temperature_setting: temp * 2 });
   }
 

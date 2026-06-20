@@ -104,7 +104,7 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
   }
 
   private startPolling(): void {
-    setInterval(async () => {
+    const poll = async () => {
       if (Date.now() < this.pollBlockedUntil) return;
       try {
         const status = await this.api.getStatus(this.device.device_id, this.device.product_id);
@@ -112,7 +112,9 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
       } catch (e) {
         this.log.warn(`Polling-Fehler: ${e}`);
       }
-    }, POLL_INTERVAL_MS);
+    };
+    poll(); // sofort beim Start
+    setInterval(poll, POLL_INTERVAL_MS);
   }
 
   async sendCommandAndPoll(command: Partial<MspaDeviceStatus>): Promise<void> {
