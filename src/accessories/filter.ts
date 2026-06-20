@@ -19,8 +19,17 @@ export class FilterAccessory {
 
     this.service.getCharacteristic(this.C.On)
       .onGet(() => this.platform.statusCache.get()?.filter_state === 1)
-      .onSet((v: CharacteristicValue) =>
-        this.platform.sendCommandAndPoll({ filter_state: (v ? 1 : 0) as 0 | 1 }));
+      .onSet(async (v: CharacteristicValue) => {
+        const turningOff = !v;
+        const heaterOn = this.platform.statusCache.get()?.heater_state === 1;
+        if (turningOff && heaterOn) {
+          // Heizung zuerst ausschalten, dann Filter
+          await this.platform.sendCommandAndPoll({ heater_state: 0 });
+          await this.platform.sendCommandAndPoll({ filter_state: 0 });
+        } else {
+          await this.platform.sendCommandAndPoll({ filter_state: (v ? 1 : 0) as 0 | 1 });
+        }
+      });
 
     platform.statusCache.subscribe((s: MspaDeviceStatus) =>
       this.service.updateCharacteristic(this.C.On, s.filter_state === 1));
