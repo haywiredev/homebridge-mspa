@@ -19,6 +19,7 @@ import { MspaApi } from './mspaApi';
 import { ThermostatAccessory } from './accessories/thermostat';
 import { FilterAccessory } from './accessories/filter';
 import { BubblesAccessory } from './accessories/bubbles';
+import { TempReachedAccessory } from './accessories/tempReached';
 
 
 export class MspaStatusCache {
@@ -79,9 +80,10 @@ export class MSpaPlatform implements DynamicPlatformPlugin {
 
   private registerAccessories(): void {
     const configs = [
-      { id: 'thermostat', name: `${this.config.name} Temperatur`, Class: ThermostatAccessory },
-      { id: 'filter',     name: `${this.config.name} Filter`,     Class: FilterAccessory },
-      { id: 'bubbles',    name: `${this.config.name} Blasen`,     Class: BubblesAccessory },
+      { id: 'thermostat',    name: `${this.config.name} Temperatur`,          Class: ThermostatAccessory },
+      { id: 'filter',        name: `${this.config.name} Filter`,              Class: FilterAccessory },
+      { id: 'bubbles',       name: `${this.config.name} Blasen`,              Class: BubblesAccessory },
+      { id: 'temp-reached',  name: `${this.config.name} Temperatur erreicht`, Class: TempReachedAccessory },
     ] as const;
 
     // Jets-Accessory entfernen falls noch gecacht
