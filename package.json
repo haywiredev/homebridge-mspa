@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mspa",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Homebridge plugin for MSpa hot tubs",
   "main": "dist/index.js",
   "scripts": {
