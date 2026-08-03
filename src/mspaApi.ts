@@ -84,19 +84,27 @@ export class MspaApi {
     }
   }
 
-  async getStatus(deviceId: string, productId: string): Promise<MspaDeviceStatus> {
+  async getStatus(deviceId: string, productId: string, isRetry = false): Promise<MspaDeviceStatus> {
     await this.throttle();
     try {
       const res = await this.http.post('/api/device/thing_shadow/', {
         device_id: deviceId,
         product_id: productId,
       }, { headers: this.buildHeaders() });
-      // API returns status directly in data (not data.state.reported)
-      return res.data.data as MspaDeviceStatus;
+      const status = res.data.data as MspaDeviceStatus;
+      // If temperature fields are missing/invalid the token has silently expired
+      if (!Number.isFinite(status?.water_temperature) || !Number.isFinite(status?.temperature_setting)) {
+        if (isRetry) throw new Error('MSpa: Status ungültig nach Re-Login');
+        this.log.warn('MSpa: Ungültige Statusdaten — Token abgelaufen, neu einloggen...');
+        await this.login();
+        return this.getStatus(deviceId, productId, true);
+      }
+      return status;
     } catch (e: any) {
       if (e?.response?.status === 401) {
+        if (isRetry) throw e;
         await this.login();
-        return this.getStatus(deviceId, productId);
+        return this.getStatus(deviceId, productId, true);
       }
       throw e;
     }

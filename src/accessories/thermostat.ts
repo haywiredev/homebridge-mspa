@@ -97,8 +97,11 @@ export class ThermostatAccessory {
   }
 
   private updateFromStatus(s: MspaDeviceStatus): void {
-    this.service.updateCharacteristic(this.C.CurrentTemperature, s.water_temperature / 2);
-    this.service.updateCharacteristic(this.C.TargetTemperature, s.temperature_setting / 2);
+    const currentTemp = s.water_temperature / 2;
+    const targetTemp = s.temperature_setting / 2;
+    if (!Number.isFinite(currentTemp) || !Number.isFinite(targetTemp)) return;
+    this.service.updateCharacteristic(this.C.CurrentTemperature, currentTemp);
+    this.service.updateCharacteristic(this.C.TargetTemperature, targetTemp);
     const heatState = s.heater_state === 1
       ? this.C.CurrentHeatingCoolingState.HEAT
       : this.C.CurrentHeatingCoolingState.OFF;
