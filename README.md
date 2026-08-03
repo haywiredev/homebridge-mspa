@@ -15,6 +15,7 @@ Connects to the MSpa Cloud API (the same one used by the MSpa Link app) and expo
 | **Hot Tub Temperature** | Thermostat | View current water temp, set target temp, toggle heating |
 | **Hot Tub Filter** | Switch | Turn filter pump on/off (auto-disables heater if needed) |
 | **Hot Tub Bubbles** | Switch | Turn massage bubbles on/off |
+| **Hot Tub Temperature Reached** | Occupancy Sensor | Triggers when the water reaches the target temperature |
 
 ---
 
@@ -88,6 +89,16 @@ Tap the thermostat accessory and toggle between **Heat** and **Off**.
 Just tap the switches.
 
 > **Note:** The filter cannot be turned off while the heater is running. The plugin will automatically turn the heater off first before stopping the filter.
+
+### Temperature Reached Notification
+
+The **Hot Tub Temperature Reached** occupancy sensor activates when the water temperature reaches the target temperature while the heater is running. Use it to set up a HomeKit automation for a notification or HomePod announcement:
+
+1. Open the **Home app** → **Automation** → **+** → **A Sensor Detects Something**
+2. Select **Hot Tub Temperature Reached** → **Detects Occupancy**
+3. On the next screen click **Convert To Shortcut**
+4. Add an action: search for **"Announce"** → enter your message (e.g. *The hot tub has reached the desired temperature*) → select your HomePod
+5. Optionally add a **Send Notification** action for iPhone alerts
 
 ---
 
